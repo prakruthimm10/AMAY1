@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Booking - Edge and Elegance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Georgia', serif;
+            font-size: 3rem;
+            color: #d4a373;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .booking-form {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 163, 115, 0.3);
+            border-radius: 15px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #d4a373;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(212, 163, 115, 0.3);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #d4a373;
+            background: rgba(212, 163, 115, 0.1);
+        }
+
+        .form-group select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .price-display {
+            background: linear-gradient(135deg, rgba(212, 163, 115, 0.2) 0%, rgba(212, 163, 115, 0.1) 100%);
+            border: 2px solid #d4a373;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .price-display h3 {
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-display .price {
+            font-size: 3rem;
+            color: #d4a373;
+            font-weight: bold;
+        }
+
+        .btn-submit {
+            background: #d4a373;
+            color: #000;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .btn-submit:hover {
+            background: #c89d6f;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 163, 115, 0.4);
+        }
+
+        .status-message {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4caf50;
+            color: #4caf50;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><i class="fas fa-calendar-check"></i> Book Your Appointment</h1>
+
+        <div class="status-message" id="status">
+            ✅ Services Database Loaded! Ready to book your appointment.
+        </div>
+
+        <form class="booking-form" id="booking-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="customer-name">Full Name *</label>
+                    <input type="text" id="customer-name" required placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="customer-phone">Phone Number *</label>
+                    <input type="tel" id="customer-phone" required placeholder="10-digit mobile number">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="customer-email">Email Address *</label>
+                    <input type="email" id="customer-email" required placeholder="your.email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="service-category">Service Category *</label>
+                    <select id="service-category" required onchange="loadServicesByCategory()">
+                        <option value="">-- Select Category --</option>
+                        <option value="elegance">Elegance (Women's Services)</option>
+                        <option value="edge">Edge (Men's Services)</option>
+                        <option value="edge_elegance">Edge & Elegance (Couples)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="service-name">Choose Service *</label>
+                    <select id="service-name" required onchange="updateServicePrice()">
+                        <option value="">-- First select a category above --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="booking-date">Appointment Date *</label>
+                    <input type="date" id="booking-date" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="booking-time">Appointment Time *</label>
+                    <select id="booking-time" required>
+                        <option value="">Select Time</option>
+                        <option value="09:00">09:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="12:00">12:00 PM</option>
+                        <option value="13:00">01:00 PM</option>
+                        <option value="14:00">02:00 PM</option>
+                        <option value="15:00">03:00 PM</option>
+                        <option value="16:00">04:00 PM</option>
+                        <option value="17:00">05:00 PM</option>
+                        <option value="18:00">06:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="preferred-stylist">Preferred Stylist</label>
+                    <select id="preferred-stylist">
+                        <option value="">Any Available</option>
+                        <option value="Ravi Kumar">Ravi Kumar</option>
+                        <option value="Anjali Mehta">Anjali Mehta</option>
+                        <option value="Suresh Singh">Suresh Singh</option>
+                        <option value="Priya Desai">Priya Desai</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="special-requests">Special Requests (Optional)</label>
+                <textarea id="special-requests" rows="4"
+                    placeholder="Any specific requirements or preferences..."></textarea>
+            </div>
+
+            <div class="price-display">
+                <h3><i class="fas fa-rupee-sign"></i> Estimated Price</h3>
+                <div class="price" id="estimated-price">₹0</div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-check-circle"></i> Book Appointment
+            </button>
+        </form>
+    </div>
+
+    <script>
+        console.log('=== Customer Booking Page Loaded ===');
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('booking-date').setAttribute('min', today);
+
+        // Complete Services Database from SQL
+        const servicesDatabase = {
+            elegance: [
+                // Luxury Hair Extensions
+                { name: 'K-Tip Extensions', price: 15000, range: '₹15,000' },
+                { name: 'I-Tip Extensions', price: 12000, range: '₹12,000' },
+                { name: 'Volume Weft Extensions', price: 18000, range: '₹18,000' },
+                { name: 'Tape-In Extensions', price: 10000, range: '₹10,000' },
+                { name: 'Extension Maintenance & Move-Ups', price: 4000, range: '₹3,000 - ₹5,000' },
+
+                // Haircuts & Styling
+                { name: 'Precision Haircuts', price: 2250, range: '₹1,500 - ₹3,000' },
+                { name: 'Dry Cutting', price: 2750, range: '₹2,000 - ₹3,500' },
+                { name: 'Boho Waves & Beachy Styling', price: 1850, range: '₹1,200 - ₹2,500' },
+                { name: 'Luxury Blowouts', price: 1500, range: '₹1,000 - ₹2,000' },
+
+                // Color Services
+                { name: 'Balayage & Hand-Painted Highlights', price: 8500, range: '₹5,000 - ₹12,000' },
+                { name: 'Lived-In Blondes & Dimensional Brunettes', price: 10500, range: '₹6,000 - ₹15,000' },
+                { name: 'Gloss & Toner Refresh', price: 2250, range: '₹1,500 - ₹3,000' },
+                { name: 'Root Touch-Up & Grey Coverage', price: 3000, range: '₹2,000 - ₹4,000' },
+                { name: 'Vivid & Fashion Colors', price: 7000, range: '₹4,000 - ₹10,000' },
+                { name: 'Color Corrections', price: 14000, range: '₹8,000 - ₹20,000' },
+
+                // Treatments & Specialty Services
+                { name: 'Luxury Deep Conditioning Treatments', price: 3000, range: '₹2,000 - ₹4,000' },
+                { name: 'Scalp Detox & Rejuvenation', price: 2250, range: '₹1,500 - ₹3,000' },
+                { name: 'Keratin Smoothing Treatment', price: 9000, range: '₹6,000 - ₹12,000' },
+                { name: 'Customized Hair Repair Services', price: 4500, range: '₹3,000 - ₹6,000' },
+
+                // Bridal & Event Styling
+                { name: 'Bridal Hair & Trial Styling', price: 11500, range: '₹8,000 - ₹15,000' },
+                { name: 'Special Occasion Updos & Glam Waves', price: 4500, range: '₹3,000 - ₹6,000' }
+            ],
+            edge: [
+                // Hair Styling
+                { name: 'Buzz Cut/Induction', price: 400, range: '₹400' },
+                { name: 'Regular Haircut', price: 500, range: '₹500' },
+                { name: 'Scissor Cut', price: 600, range: '₹600' },
+                { name: 'Fade', price: 700, range: '₹700' },
+                { name: 'Skin Fade', price: 800, range: '₹800' },
+                { name: 'Undercut', price: 900, range: '₹900' },
+
+                // Color Services
+                { name: 'Root Touch-Up', price: 300, range: '₹300' },
+                { name: 'Grey Blending', price: 400, range: '₹400' },
+                { name: 'Full Color', price: 500, range: '₹500' },
+                { name: 'Highlights', price: 750, range: '₹600 - ₹900' },
+
+                // Treatments
+                { name: 'Deep Conditioning', price: 300, range: '₹300' },
+                { name: 'Scalp Treatment', price: 400, range: '₹400' },
+                { name: 'Keratin Treatment', price: 700, range: '₹500 - ₹900' },
+
+                // Styling
+                { name: 'Blowout', price: 200, range: '₹200' },
+                { name: 'Wash & Style', price: 300, range: '₹300' },
+                { name: 'Formal Styling', price: 500, range: '₹400 - ₹600' },
+
+                // Facial & Grooming
+                { name: 'Beard Trim', price: 200, range: '₹200' },
+                { name: 'Beard Shaping', price: 300, range: '₹300' },
+                { name: 'Facial Cleanup', price: 400, range: '₹400' },
+                { name: 'Deluxe Facial', price: 650, range: '₹500 - ₹800' },
+                { name: 'Manicure & Pedicure', price: 750, range: '₹600 - ₹900' }
+            ],
+            edge_elegance: [
+                // Spa & Relaxation Treatments
+                { name: 'Couple\'s Swedish Massage', price: 7000, range: '₹6,000 - ₹8,000' },
+                { name: 'Couple\'s Deep Tissue Massage', price: 8000, range: '₹7,000 - ₹9,000' },
+                { name: 'Couple\'s Aromatherapy Massage', price: 8750, range: '₹7,500 - ₹10,000' },
+                { name: 'Couple\'s Hot Stone Massage', price: 9500, range: '₹8,000 - ₹11,000' },
+
+                // Body Treatments
+                { name: 'Full Body Scrub', price: 5000, range: '₹4,000 - ₹6,000' },
+                { name: 'Mud Wrap Treatment', price: 6000, range: '₹5,000 - ₹7,000' },
+                { name: 'Seaweed Wrap', price: 6500, range: '₹5,500 - ₹7,500' },
+                { name: 'Body Polishing Treatment', price: 7250, range: '₹6,000 - ₹8,500' },
+
+                // Facial Treatments
+                { name: 'Couple\'s Classic Facial', price: 5000, range: '₹4,000 - ₹6,000' },
+                { name: 'Anti-Aging Facial', price: 6250, range: '₹5,000 - ₹7,500' },
+                { name: 'Brightening Facial', price: 5500, range: '₹4,500 - ₹6,500' },
+                { name: 'Hydrating Facial', price: 5000, range: '₹4,000 - ₹6,000' },
+
+                // Hydrotherapy & Wellness
+                { name: 'Jacuzzi Session', price: 2500, range: '₹2,000 - ₹3,000' },
+                { name: 'Sauna Session', price: 2000, range: '₹1,500 - ₹2,500' },
+                { name: 'Steam Room Session', price: 2000, range: '₹1,500 - ₹2,500' },
+                { name: 'Complete Hydrotherapy Package', price: 5000, range: '₹4,000 - ₹6,000' },
+
+                // Grooming & Beauty Services
+                { name: 'Couple\'s Manicure', price: 2750, range: '₹2,000 - ₹3,500' },
+                { name: 'Couple\'s Pedicure', price: 3000, range: '₹2,500 - ₹4,000' },
+                { name: 'Couple\'s Mani-Pedi Combo', price: 5000, range: '₹4,000 - ₹6,500' },
+                { name: 'Couple\'s Hair Services', price: 4000, range: '₹3,000 - ₹5,000' },
+                { name: 'Hair Spa Treatment', price: 4500, range: '₹3,500 - ₹5,500' },
+
+                // Bridal & Groom Packages
+                { name: 'Bridal Pre-Wedding Package', price: 20000, range: '₹15,000 - ₹25,000' },
+                { name: 'Groom Pre-Wedding Package', price: 14000, range: '₹10,000 - ₹18,000' },
+                { name: 'Couple\'s Bridal Package', price: 32500, range: '₹25,000 - ₹40,000' },
+                { name: 'Wedding Day Styling', price: 16000, range: '₹12,000 - ₹20,000' },
+                { name: 'Bridal Trial Session', price: 6500, range: '₹5,000 - ₹8,000' },
+
+                // Luxury Spa Packages
+                { name: 'Romantic Spa Day', price: 20000, range: '₹15,000 - ₹25,000' },
+                { name: 'Evening Relaxation Package', price: 12500, range: '₹10,000 - ₹15,000' },
+                { name: 'Anniversary Special', price: 23000, range: '₹18,000 - ₹28,000' },
+                { name: 'Ultimate Wellness Retreat', price: 25000, range: '₹25,000+' }
+            ]
+        };
+
+        console.log('✅ Services loaded:', {
+            elegance: servicesDatabase.elegance.length,
+            edge: servicesDatabase.edge.length,
+            edge_elegance: servicesDatabase.edge_elegance.length
+        });
+
+        // Load services by category
+        function loadServicesByCategory() {
+            console.log('Loading services...');
+            const category = document.getElementById('service-category').value;
+            const serviceSelect = document.getElementById('service-name');
+
+            serviceSelect.innerHTML = '<option value="">-- Choose a service --</option>';
+            document.getElementById('estimated-price').textContent = '₹0';
+
+            if (category && servicesDatabase[category]) {
+                console.log('Loading', servicesDatabase[category].length, 'services for', category);
+                servicesDatabase[category].forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service.name;
+                    option.setAttribute('data-price', service.price);
+                    option.textContent = service.name + ' (' + service.range + ')';
+                    serviceSelect.appendChild(option);
+                });
+                console.log('✅ Services loaded successfully!');
+            }
+        }
+
+        // Update service price
+        function updateServicePrice() {
+            const serviceSelect = document.getElementById('service-name');
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+
+            if (selectedOption && selectedOption.getAttribute('data-price')) {
+                const price = parseInt(selectedOption.getAttribute('data-price'));
+                document.getElementById('estimated-price').textContent = '₹' + price.toLocaleString();
+                console.log('✅ Price updated to ₹' + price.toLocaleString());
+            } else {
+                document.getElementById('estimated-price').textContent = '₹0';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('booking-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('customer-name').value,
+                phone: document.getElementById('customer-phone').value,
+                email: document.getElementById('customer-email').value,
+                category: document.getElementById('service-category').value,
+                service: document.getElementById('service-name').value,
+                date: document.getElementById('booking-date').value,
+                time: document.getElementById('booking-time').value,
+                stylist: document.getElementById('preferred-stylist').value || 'Any Available',
+                requests: document.getElementById('special-requests').value,
+                price: document.getElementById('estimated-price').textContent
+            };
+
+            alert(`✅ Booking Confirmed!\n\nCustomer: ${formData.name}\nService: ${formData.service}\nDate: ${formData.date}\nTime: ${formData.time}\nStylist: ${formData.stylist}\nPrice: ${formData.price}\n\nYou will receive a confirmation email shortly!`);
+
+            // Reset form
+            this.reset();
+            document.getElementById('estimated-price').textContent = '₹0';
+        });
+    </script>
+</body>
+
+</html>

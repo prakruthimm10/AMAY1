@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        h1 {
+            color: #d4a373;
+            text-align: center;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        label {
+            display: block;
+            color: #d4a373;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #d4a373;
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .price-display {
+            background: rgba(212, 163, 115, 0.2);
+            border: 2px solid #d4a373;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .price-display h2 {
+            margin: 0;
+            color: #d4a373;
+            font-size: 2.5rem;
+        }
+
+        .status {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #4caf50;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Services Dropdown Test Page</h1>
+
+    <div class="status" id="status">
+        Loading services database...
+    </div>
+
+    <div class="form-group">
+        <label for="service-category">1. Select Service Category:</label>
+        <select id="service-category" onchange="loadServicesByCategory()">
+            <option value="">-- Select Category --</option>
+            <option value="elegance">Elegance (Women's Services)</option>
+            <option value="edge">Edge (Men's Services)</option>
+            <option value="edge_elegance">Edge & Elegance (Couples)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="service-name">2. Select Service:</label>
+        <select id="service-name" onchange="updateServicePrice()">
+            <option value="">-- Choose a service --</option>
+        </select>
+    </div>
+
+    <div class="price-display">
+        <p style="margin: 0; color: #aaa;">Estimated Price:</p>
+        <h2 id="estimated-price">₹0</h2>
+    </div>
+
+    <script>
+        console.log('=== Services Test Page Loaded ===');
+
+        // Complete Services Database
+        const servicesDatabase = {
+            elegance: [
+                { name: 'K-Tip Extensions', price: 15000, priceRange: 'Starting at ₹15,000' },
+                { name: 'I-Tip Extensions', price: 12000, priceRange: 'Starting at ₹12,000' },
+                { name: 'Volume Weft Extensions', price: 18000, priceRange: 'Starting at ₹18,000' },
+                { name: 'Tape-In Extensions', price: 10000, priceRange: 'Starting at ₹10,000' },
+                { name: 'Extension Maintenance & Move-Ups', price: 4000, priceRange: '₹3,000 - ₹5,000' },
+                { name: 'Precision Haircuts', price: 2000, priceRange: '₹1,500 - ₹3,000' },
+                { name: 'Dry Cutting', price: 2500, priceRange: '₹2,000 - ₹3,500' },
+                { name: 'Layered Cuts', price: 2200, priceRange: '₹1,800 - ₹3,200' },
+                { name: 'Bang/Fringe Trim', price: 500, priceRange: '₹300 - ₹800' },
+                { name: 'Balayage Highlights', price: 8000, priceRange: '₹5,000 - ₹12,000' },
+                { name: 'Full Highlights', price: 7000, priceRange: '₹4,500 - ₹10,000' },
+                { name: 'Partial Highlights', price: 5000, priceRange: '₹3,500 - ₹7,000' },
+                { name: 'Ombre/Sombre', price: 9000, priceRange: '₹6,000 - ₹13,000' },
+                { name: 'Root Touch-Up', price: 2500, priceRange: '₹1,500 - ₹3,500' },
+                { name: 'Full Color', price: 4000, priceRange: '₹2,500 - ₹6,000' },
+                { name: 'Color Correction', price: 12000, priceRange: '₹8,000 - ₹18,000' },
+                { name: 'Toner Application', price: 2000, priceRange: '₹1,200 - ₹3,000' },
+                { name: 'Keratin Treatment', price: 9000, priceRange: '₹7,000 - ₹12,000' },
+                { name: 'Brazilian Blowout', price: 10000, priceRange: '₹8,000 - ₹14,000' },
+                { name: 'Deep Conditioning Treatment', price: 3000, priceRange: '₹2,000 - ₹4,500' },
+                { name: 'Olaplex Treatment', price: 4500, priceRange: '₹3,500 - ₹6,000' },
+                { name: 'Hair Botox', price: 8000, priceRange: '₹6,000 - ₹11,000' },
+                { name: 'Scalp Treatment', price: 2500, priceRange: '₹1,800 - ₹3,500' },
+                { name: 'Blowout', price: 1500, priceRange: '₹1,000 - ₹2,500' },
+                { name: 'Curling/Waving', price: 2000, priceRange: '₹1,500 - ₹3,000' },
+                { name: 'Updo Styling', price: 3500, priceRange: '₹2,500 - ₹5,000' },
+                { name: 'Hair Straightening', price: 2500, priceRange: '₹1,800 - ₹3,500' },
+                { name: 'Classic Facial', price: 2500, priceRange: '₹2,000 - ₹3,500' },
+                { name: 'Anti-Aging Facial', price: 4000, priceRange: '₹3,500 - ₹5,500' },
+                { name: 'Hydrating Facial', price: 3000, priceRange: '₹2,500 - ₹4,000' },
+                { name: 'Brightening Facial', price: 3500, priceRange: '₹3,000 - ₹5,000' },
+                { name: 'Acne Treatment Facial', price: 3200, priceRange: '₹2,800 - ₹4,500' },
+                { name: 'Classic Manicure', price: 800, priceRange: '₹600 - ₹1,200' },
+                { name: 'Gel Manicure', price: 1500, priceRange: '₹1,200 - ₹2,000' },
+                { name: 'Classic Pedicure', price: 1000, priceRange: '₹800 - ₹1,500' },
+                { name: 'Gel Pedicure', price: 1800, priceRange: '₹1,500 - ₹2,500' },
+                { name: 'Manicure & Pedicure Combo', price: 2000, priceRange: '₹1,500 - ₹3,000' },
+                { name: 'Bridal Hair & Trial Styling', price: 12000, priceRange: '₹8,000 - ₹15,000' },
+                { name: 'Special Occasion Updos & Glam Waves', price: 4500, priceRange: '₹3,000 - ₹6,000' }
+            ],
+            edge: [
+                { name: 'Buzz Cut/Induction', price: 400, priceRange: '₹400' },
+                { name: 'Regular Haircut', price: 500, priceRange: '₹500' },
+                { name: 'Scissor Cut', price: 600, priceRange: '₹600' },
+                { name: 'Fade', price: 700, priceRange: '₹700' },
+                { name: 'Skin Fade', price: 800, priceRange: '₹800' },
+                { name: 'Undercut', price: 900, priceRange: '₹900' },
+                { name: 'Root Touch-Up (Men)', price: 300, priceRange: '₹300' },
+                { name: 'Grey Blending', price: 400, priceRange: '₹400' },
+                { name: 'Full Color (Men)', price: 500, priceRange: '₹500' },
+                { name: 'Highlights (Men)', price: 750, priceRange: '₹600 - ₹900' },
+                { name: 'Deep Conditioning (Men)', price: 300, priceRange: '₹300' },
+                { name: 'Scalp Treatment (Men)', price: 400, priceRange: '₹400' },
+                { name: 'Keratin Treatment (Men)', price: 700, priceRange: '₹500 - ₹900' },
+                { name: 'Blowout (Men)', price: 200, priceRange: '₹200' },
+                { name: 'Wash & Style', price: 300, priceRange: '₹300' },
+                { name: 'Formal Styling', price: 500, priceRange: '₹400 - ₹600' },
+                { name: 'Beard Trim', price: 200, priceRange: '₹200' },
+                { name: 'Beard Shaping', price: 300, priceRange: '₹300' },
+                { name: 'Facial Cleanup (Men)', price: 400, priceRange: '₹400' },
+                { name: 'Deluxe Facial (Men)', price: 650, priceRange: '₹500 - ₹800' },
+                { name: 'Manicure & Pedicure (Men)', price: 750, priceRange: '₹600 - ₹900' }
+            ],
+            edge_elegance: [
+                { name: 'Couple\'s Swedish Massage', price: 7000, priceRange: '₹6,000 - ₹8,000' },
+                { name: 'Couple\'s Deep Tissue Massage', price: 8000, priceRange: '₹7,000 - ₹9,000' },
+                { name: 'Couple\'s Aromatherapy Massage', price: 8750, priceRange: '₹7,500 - ₹10,000' },
+                { name: 'Couple\'s Hot Stone Massage', price: 9500, priceRange: '₹8,000 - ₹11,000' },
+                { name: 'Full Body Scrub', price: 5000, priceRange: '₹4,000 - ₹6,000' },
+                { name: 'Mud Wrap Treatment', price: 6000, priceRange: '₹5,000 - ₹7,000' },
+                { name: 'Seaweed Wrap', price: 6500, priceRange: '₹5,500 - ₹7,500' },
+                { name: 'Body Polishing Treatment', price: 7250, priceRange: '₹6,000 - ₹8,500' },
+                { name: 'Couple\'s Classic Facial', price: 5000, priceRange: '₹4,000 - ₹6,000' },
+                { name: 'Anti-Aging Facial (Couples)', price: 6250, priceRange: '₹5,000 - ₹7,500' },
+                { name: 'Brightening Facial (Couples)', price: 5500, priceRange: '₹4,500 - ₹6,500' },
+                { name: 'Hydrating Facial (Couples)', price: 5000, priceRange: '₹4,000 - ₹6,000' },
+                { name: 'Jacuzzi Session', price: 2500, priceRange: '₹2,000 - ₹3,000' },
+                { name: 'Sauna Session', price: 2000, priceRange: '₹1,500 - ₹2,500' },
+                { name: 'Steam Room Session', price: 2000, priceRange: '₹1,500 - ₹2,500' },
+                { name: 'Complete Hydrotherapy Package', price: 5000, priceRange: '₹4,000 - ₹6,000' },
+                { name: 'Couple\'s Manicure', price: 2750, priceRange: '₹2,000 - ₹3,500' },
+                { name: 'Couple\'s Pedicure', price: 3000, priceRange: '₹2,500 - ₹4,000' },
+                { name: 'Couple\'s Mani-Pedi Combo', price: 5000, priceRange: '₹4,000 - ₹6,500' },
+                { name: 'Pre-Wedding Package', price: 25000, priceRange: '₹20,000 - ₹35,000' },
+                { name: 'Romantic Spa Day', price: 15000, priceRange: '₹12,000 - ₹20,000' },
+                { name: 'Anniversary Special Package', price: 18000, priceRange: '₹15,000 - ₹25,000' }
+            ]
+        };
+
+        document.getElementById('status').innerHTML = '✅ Services Database Loaded!<br>' +
+            'Elegance: ' + servicesDatabase.elegance.length + ' services<br>' +
+            'Edge: ' + servicesDatabase.edge.length + ' services<br>' +
+            'Edge & Elegance: ' + servicesDatabase.edge_elegance.length + ' services';
+
+        console.log('Services loaded:', {
+            elegance: servicesDatabase.elegance.length,
+            edge: servicesDatabase.edge.length,
+            edge_elegance: servicesDatabase.edge_elegance.length
+        });
+
+        // Load services by category
+        function loadServicesByCategory() {
+            console.log('loadServicesByCategory() called');
+            const category = document.getElementById('service-category').value;
+            const serviceSelect = document.getElementById('service-name');
+
+            console.log('Selected category:', category);
+
+            serviceSelect.innerHTML = '<option value="">-- Choose a service --</option>';
+
+            if (category && servicesDatabase[category]) {
+                console.log('Loading', servicesDatabase[category].length, 'services');
+                servicesDatabase[category].forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service.name;
+                    option.setAttribute('data-price', service.price);
+                    option.textContent = service.name + ' (' + service.priceRange + ')';
+                    serviceSelect.appendChild(option);
+                });
+                console.log('✅ Services loaded successfully!');
+            }
+
+            document.getElementById('estimated-price').textContent = '₹0';
+        }
+
+        // Update service price
+        function updateServicePrice() {
+            console.log('updateServicePrice() called');
+            const serviceSelect = document.getElementById('service-name');
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+
+            if (selectedOption && selectedOption.getAttribute('data-price')) {
+                const price = parseInt(selectedOption.getAttribute('data-price'));
+                document.getElementById('estimated-price').textContent = '₹' + price.toLocaleString();
+                console.log('✅ Price updated to:', price);
+            } else {
+                document.getElementById('estimated-price').textContent = '₹0';
+            }
+        }
+    </script>
+</body>
+
+</html>
