@@ -16,7 +16,7 @@
 
     <header>
         <div class="logo">
-            <a href="#" class="logo-full">Edge and Elegance</a>
+            <a href="#" class="logo-full">Aasif </a>
         </div>
         <nav>
             <ul>
