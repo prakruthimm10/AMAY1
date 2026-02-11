@@ -16,7 +16,7 @@
 
     <header>
         <div class="logo">
-            <a href="#" class="logo-full">Aasif </a>
+            <a href="#" class="logo-full">Mithunn </a>
         </div>
         <nav>
             <ul>
